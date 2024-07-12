@@ -39,7 +39,7 @@ class NurseRegistrationView(APIView):
 class DoctorViewSet(viewsets.ModelViewSet):
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
-    permission_classes = [IsChiefDoctorOrReadOnly]
+    # permission_classes = [IsChiefDoctorOrReadOnly]
 
 class NurseViewSet(viewsets.ModelViewSet):
     queryset = Nurse.objects.all()

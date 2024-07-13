@@ -1,33 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
 from rest_framework import permissions
-
 
 class User(AbstractUser):
     class GenderChoices(models.TextChoices):
-        MALE = 'male', 'мужчина'
-        FEMALE = 'female', 'женщина'
-        OTHER = 'other', 'другое'
+        male = 'male', 'мужчина'
+        female = 'female', 'женщина'
+        other = 'other', 'другое'
 
     middle_name = models.CharField(
         max_length=150,
         verbose_name='отчество',
-        blank=True,
-        null=True,
     )
     photo = models.ImageField(
         upload_to='user_photo/',
         verbose_name='фото',
-        blank=True,
-        null=True,
     )
     gender = models.CharField(
         max_length=15,
         choices=GenderChoices.choices,
-        verbose_name='пол',
-        blank=True,
-        null=True,
+        verbose_name='пол'
     )
 
     def __str__(self):
@@ -40,12 +32,12 @@ class User(AbstractUser):
 
 class Doctor(User):
     class SpecialityChoices(models.TextChoices):
-        INTERNAL_MEDICINE = 'internal_medicine', 'терапевт'
-        PEDIATRICS = 'pediatrics', 'педиатр'
-        SURGERY = 'surgery', 'хирург'
-        CARDIOLOGY = 'cardiology', 'кардиолог'
-        NEUROLOGY = 'neurology', 'невролог'
-        OPHTHALMOLOGY = 'ophthalmology', 'офтальмолог'
+        internal_medicine = 'internal_medicine', 'терапевт'
+        pediatrics = 'pediatrics', 'педиатр'
+        surgery = 'surgery', 'хирург'
+        cardiology = 'cardiology', 'кардиолог'
+        neurology = 'neurology', 'невролог'
+        ophthalmology = 'ophthalmology', 'офтальмолог'
 
     is_chief_doctor = models.BooleanField(default=False)
 
@@ -53,8 +45,6 @@ class Doctor(User):
         max_length=150,
         choices=SpecialityChoices.choices,
         verbose_name='специальность',
-        blank=True,
-        null=True,
     )
 
     def __str__(self):
@@ -75,25 +65,37 @@ class Nurse(User):
         verbose_name = 'Медсестра'
         verbose_name_plural = 'Медсестры'
 
+
 class IsDoctorOrChiefDoctor(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return request.user.is_authenticated and (
-            isinstance(request.user, Doctor) and request.user.is_chief_doctor
-        ) or (
-            isinstance(request.user, Doctor) and not request.user.is_chief_doctor
-        )
+        if request.user and request.user.is_authenticated:
+            if request.user.is_staff:
+                return True
+            if hasattr(request.user, 'doctor'):
+                return request.user.doctor.is_chief_doctor or request.user.doctor
+        return False
 
 class IsChiefDoctorOrAdmin(permissions.BasePermission):
+    """
+    Разрешение для главврача или администратора.
+    """
+
     def has_permission(self, request, view):
-        return request.user.is_authenticated and (
-            request.user.is_staff or 
-            (isinstance(request.user, Doctor) and request.user.is_chief_doctor)
-        )
+        # Разрешение только для администратора или главврача
+        if request.user and request.user.is_authenticated:
+            if request.user.is_staff:
+                return True
+            if isinstance(request.user, Doctor) and request.user.is_chief_doctor:
+                return True
+        return False
 
 class IsAdminOrReadOnly(permissions.BasePermission):
+    """
+    Разрешение только для администратора, остальные имеют доступ только для чтения.
+    """
+
     def has_permission(self, request, view):
+        # Разрешение только для администратора, остальные могут только читать
         if request.method in permissions.SAFE_METHODS:
             return True
-        return request.user.is_authenticated and request.user.is_staff
+        return request.user and request.user.is_staff

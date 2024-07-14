@@ -8,5 +8,4 @@ router.register(r'nurses', NurseViewSet, basename='nurse')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('doctors/register-chief-doctor/', DoctorViewSet.as_view({'post': 'register_chief_doctor'}), name='register-chief-doctor'),
 ]

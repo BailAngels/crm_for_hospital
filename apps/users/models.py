@@ -4,9 +4,9 @@ from rest_framework import permissions
 
 class User(AbstractUser):
     class GenderChoices(models.TextChoices):
-        male = 'male', 'мужчина'
-        female = 'female', 'женщина'
-        other = 'other', 'другое'
+        MALE = 'male', 'мужчина'
+        FEMALE = 'female', 'женщина'
+        OTHER = 'other', 'другое'
 
     middle_name = models.CharField(
         max_length=150,
@@ -32,12 +32,12 @@ class User(AbstractUser):
 
 class Doctor(User):
     class SpecialityChoices(models.TextChoices):
-        internal_medicine = 'internal_medicine', 'терапевт'
-        pediatrics = 'pediatrics', 'педиатр'
-        surgery = 'surgery', 'хирург'
-        cardiology = 'cardiology', 'кардиолог'
-        neurology = 'neurology', 'невролог'
-        ophthalmology = 'ophthalmology', 'офтальмолог'
+        INTERNAL_MEDICINE = 'internal_medicine', 'терапевт'
+        PEDIATRICS = 'pediatrics', 'педиатр'
+        SURGERY = 'surgery', 'хирург'
+        CARDIOLOGY = 'cardiology', 'кардиолог'
+        NEUROLOGY = 'neurology', 'невролог'
+        OPHTHALMOLOGY = 'ophthalmology', 'офтальмолог'
 
     is_chief_doctor = models.BooleanField(default=False)
 
@@ -75,13 +75,9 @@ class IsDoctorOrChiefDoctor(permissions.BasePermission):
                 return request.user.doctor.is_chief_doctor or request.user.doctor
         return False
 
-class IsChiefDoctorOrAdmin(permissions.BasePermission):
-    """
-    Разрешение для главврача или администратора.
-    """
 
+class IsChiefDoctorOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
-        # Разрешение только для администратора или главврача
         if request.user and request.user.is_authenticated:
             if request.user.is_staff:
                 return True
@@ -89,13 +85,39 @@ class IsChiefDoctorOrAdmin(permissions.BasePermission):
                 return True
         return False
 
-class IsAdminOrReadOnly(permissions.BasePermission):
-    """
-    Разрешение только для администратора, остальные имеют доступ только для чтения.
-    """
 
+class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        # Разрешение только для администратора, остальные могут только читать
         if request.method in permissions.SAFE_METHODS:
             return True
         return request.user and request.user.is_staff
+
+
+class IsChiefDoctorOrAdminOrReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.user and request.user.is_authenticated:
+            if request.user.is_staff:
+                return True
+            if isinstance(request.user, Doctor) and request.user.is_chief_doctor:
+                return True
+        return False
+    
+
+class IsAdmin(permissions.BasePermission):
+    """
+    Разрешение только для администратора.
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.is_staff
+
+
+class IsAdminOrChiefDoctor(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user and request.user.is_authenticated:
+            if request.user.is_staff:
+                return True
+            if isinstance(request.user, Doctor) and request.user.is_chief_doctor:
+                return True
+        return False

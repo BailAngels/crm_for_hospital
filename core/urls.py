@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.patients.urls')),
     path('', include('apps.users.urls')),
-    path('', include('apps.speciality.urls')),
+    path('', include('apps.specialities.urls')),
     path('token_create/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token_refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api_login/', include('rest_framework.urls')),

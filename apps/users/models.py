@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from rest_framework import permissions
 
-from apps.speciality.models import Speciality
+from apps.specialities.models import Speciality
 
 
 class User(AbstractUser):

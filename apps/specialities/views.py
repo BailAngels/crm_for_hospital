@@ -3,8 +3,8 @@ from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter
 
-from apps.speciality.models import Speciality
-from apps.speciality.serializers import SpecialitySerializer
+from apps.specialities.models import Speciality
+from apps.specialities.serializers import SpecialitySerializer
 
 from apps.users.models import IsAdminOrReadOnly
 from apps.users.views import StandardResultsSetPagination

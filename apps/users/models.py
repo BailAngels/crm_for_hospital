@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from rest_framework import permissions
 
+from apps.speciality.models import Speciality
+
+
 class User(AbstractUser):
     class GenderChoices(models.TextChoices):
         MALE = 'male', 'мужчина'
@@ -31,21 +34,8 @@ class User(AbstractUser):
 
 
 class Doctor(User):
-    class SpecialityChoices(models.TextChoices):
-        INTERNAL_MEDICINE = 'internal_medicine', 'терапевт'
-        PEDIATRICS = 'pediatrics', 'педиатр'
-        SURGERY = 'surgery', 'хирург'
-        CARDIOLOGY = 'cardiology', 'кардиолог'
-        NEUROLOGY = 'neurology', 'невролог'
-        OPHTHALMOLOGY = 'ophthalmology', 'офтальмолог'
-
     is_chief_doctor = models.BooleanField(default=False)
-
-    speciality = models.CharField(
-        max_length=150,
-        choices=SpecialityChoices.choices,
-        verbose_name='специальность',
-    )
+    speciality = models.ForeignKey(Speciality, on_delete=models.CASCADE, verbose_name='специальность')
 
     def __str__(self):
         return f"Doctor: {self.username}"

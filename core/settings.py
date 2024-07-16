@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 ] + [
     'apps.users',
     'apps.patients',
+    'apps.speciality',
 ]
 
 REST_FRAMEWORK = {
@@ -66,7 +67,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
-
 
 
 MIDDLEWARE = [

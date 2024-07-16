@@ -23,7 +23,7 @@ class DoctorViewSet(viewsets.ModelViewSet):
     queryset = Doctor.objects.all()
     filter_backends = [filters.DjangoFilterBackend, SearchFilter]
     filterset_fields = ['speciality', 'is_chief_doctor']
-    search_fields = ['username', 'first_name', 'last_name', 'speciality']
+    search_fields = ['username', 'first_name', 'last_name', 'speciality__name']
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):

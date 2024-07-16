@@ -24,13 +24,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.patients.urls')),
     path('', include('apps.users.urls')),
-    path('token_create/', TokenObtainPairView.as_view()),
-    path('token_refresh/', TokenRefreshView.as_view()),
+    path('', include('apps.speciality.urls')),
+    path('token_create/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token_refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api_login/', include('rest_framework.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
-
-urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

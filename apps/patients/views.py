@@ -31,27 +31,4 @@ class DiseaseHistoryViewSet(viewsets.ModelViewSet):
     search_fields = ['disease']
     pagination_class = StandardResultsSetPagination
 
-    def create(self, request, *args, **kwargs):
-        patient_data = request.data.get('patient', {})
-        history_data = request.data.get('history', {})
-
-        # Check if the patient card exists
-        personal_number = patient_data.get('personal_number')
-        try:
-            patient_card = PatientCard.objects.get(personal_number=personal_number)
-        except PatientCard.DoesNotExist:
-            # Create a new patient card
-            patient_serializer = PatientCardSerializer(data=patient_data)
-            if patient_serializer.is_valid():
-                patient_card = patient_serializer.save()
-            else:
-                return Response(patient_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        # Create a new disease history for the patient
-        history_data['patient_cart'] = patient_card.id
-        history_serializer = DiseaseHistorySerializer(data=history_data)
-        if history_serializer.is_valid():
-            history_serializer.save(doctor=request.user)
-            return Response(history_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(history_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+   

@@ -8,7 +8,6 @@ from .serializers import (
     NurseSerializer,
     NurseCreateSerializerForAdminAndChiefDoctor,
     DoctorCreateByAdminSerializer,
-    DoctorCreateByChiefSerializer,
     NurseCreateSerializer,
 )
 from apps.users.models import IsChiefDoctorOrAdminOrReadOnly
@@ -34,7 +33,6 @@ class DoctorViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
-
 
 
 class NurseViewSet(viewsets.ModelViewSet):

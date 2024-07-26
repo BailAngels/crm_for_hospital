@@ -42,7 +42,7 @@ class DoctorCreateSerializerForAdmin(serializers.ModelSerializer):
         return doctor
 
 
-class DoctorCreateSerializerForChiefDoctor(serializers.ModelSerializer):
+class DoctorCreateByChiefSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -102,31 +102,6 @@ class NurseCreateSerializer(serializers.ModelSerializer):
         nurse.set_password(password)
         nurse.save()
         return nurse
-    
-class DoctorCreateByChiefSerializer(serializers.ModelSerializer):
-    """ Создание Доктора Сериализатор для главврача """
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = Doctor
-        fields = [
-            'username',
-            'first_name',
-            'last_name',
-            'middle_name',
-            'photo',
-            'gender',
-            'password',
-            'speciality'
-        ]
-
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-        doctor = Doctor(**validated_data)
-        doctor.set_password(password)
-        doctor.save()
-        return doctor
-    
     
 class DoctorCreateByAdminSerializer(serializers.ModelSerializer):
     """ Создание Доктора Сериализатор для администратора """

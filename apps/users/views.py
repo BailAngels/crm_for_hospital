@@ -10,7 +10,7 @@ from .serializers import (
     NurseCreateSerializerForAdminAndChiefDoctor,
     NurseCreateSerializer
 )
-from apps.users.models import IsChiefDoctorOrAdminOrReadOnly, IsChiefDoctorOrAdmin
+from apps.users.models import IsChiefDoctorOrAdmin, IsChiefDoctorOrAdminOrReadOnly
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10

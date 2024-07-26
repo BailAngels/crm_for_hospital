@@ -71,8 +71,8 @@ class IsChiefDoctorOrAdmin(permissions.BasePermission):
         if request.user and request.user.is_authenticated:
             if request.user.is_staff:
                 return True
-            if isinstance(request.user, Doctor) and request.user.is_chief_doctor:
-                return True
+            if hasattr(request.user, 'doctor'):
+                return request.user.doctor.is_chief_doctor
         return False
 
 
@@ -90,8 +90,8 @@ class IsChiefDoctorOrAdminOrReadOnly(permissions.BasePermission):
         if request.user and request.user.is_authenticated:
             if request.user.is_staff:
                 return True
-            if isinstance(request.user, Doctor) and request.user.is_chief_doctor:
-                return True
+            if hasattr(request.user, 'doctor'):
+                return request.user.doctor.is_chief_doctor
         return False
     
 

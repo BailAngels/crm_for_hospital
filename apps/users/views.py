@@ -37,7 +37,7 @@ class DoctorViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method == 'POST':
-            return [IsChiefDoctorOrAdmin]
+            return [IsChiefDoctorOrAdmin()]
         return super().get_permissions()
 
 

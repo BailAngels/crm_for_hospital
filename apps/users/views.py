@@ -28,19 +28,13 @@ class DoctorViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         user = self.request.user
-        if user.is_staff and not isinstance(user, Doctor):  # Если пользователь администратор
+        if user.is_staff or (isinstance(user, Doctor) and user.is_chief_doctor):
             return DoctorCreateByAdminSerializer
-        if isinstance(user, Doctor) and user.is_chief_doctor:  # Если пользователь главврач
-            return DoctorCreateByChiefSerializer
         return DoctorSerializer
 
     def perform_create(self, serializer):
-        user = self.request.user
-        if isinstance(user, Doctor) and user.is_chief_doctor:
-            # Если главврач создает доктора, устанавливаем is_chief_doctor на False
-            serializer.save(is_chief_doctor=False)
-        else:
-            serializer.save()
+        serializer.save()
+
 
 
 class NurseViewSet(viewsets.ModelViewSet):

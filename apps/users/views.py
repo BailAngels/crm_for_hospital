@@ -5,12 +5,12 @@ from rest_framework.filters import SearchFilter
 from .models import Doctor, Nurse
 from .serializers import (
     DoctorSerializer,
+    DoctorCreateSerializer,
     NurseSerializer,
     NurseCreateSerializerForAdminAndChiefDoctor,
-    DoctorCreateByAdminSerializer,
-    NurseCreateSerializer,
+    NurseCreateSerializer
 )
-from apps.users.models import IsChiefDoctorOrAdminOrReadOnly
+from apps.users.permissions import IsChiefDoctorOrAdminOrReadOnly
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -26,13 +26,19 @@ class DoctorViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
-        user = self.request.user
-        if user.is_staff or (isinstance(user, Doctor) and user.is_chief_doctor):
-            return DoctorCreateByAdminSerializer
+        if self.request.method == 'POST':
+            user = self.request.user
+            if user.is_staff or (hasattr(user, 'doctor') and user.doctor.is_chief_doctor):
+                return DoctorCreateSerializer
         return DoctorSerializer
 
     def perform_create(self, serializer):
         serializer.save()
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsChiefDoctorOrAdmin()]
+        return super().get_permissions()
 
 
 class NurseViewSet(viewsets.ModelViewSet):
@@ -45,12 +51,12 @@ class NurseViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'POST':
             user = self.request.user
-            if user.is_staff or (isinstance(user, Doctor) and user.is_chief_doctor):
+            if user.is_staff or (hasattr(user, 'doctor') and user.doctor.is_chief_doctor):
                 return NurseCreateSerializerForAdminAndChiefDoctor
             return NurseCreateSerializer
         return NurseSerializer
 
     def get_permissions(self):
         if self.request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            return [permission() for permission in self.permission_classes]
+            return [IsChiefDoctorOrAdminOrReadOnly()]
         return [permission() for permission in self.permission_classes]

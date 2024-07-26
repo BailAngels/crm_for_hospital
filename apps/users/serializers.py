@@ -17,7 +17,7 @@ class DoctorSerializer(serializers.ModelSerializer):
         ]
 
 
-class DoctorCreateSerializerForAdmin(serializers.ModelSerializer):
+class DoctorCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:

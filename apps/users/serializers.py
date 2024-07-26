@@ -55,6 +55,7 @@ class DoctorCreateByChiefSerializer(serializers.ModelSerializer):
             'photo',
             'gender',
             'password',
+            'is_chief_doctor',
             'speciality'
         ]
 

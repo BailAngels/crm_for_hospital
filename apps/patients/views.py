@@ -1,7 +1,5 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.filters import SearchFilter  # Исправьте импорт
+from rest_framework import viewsets
+from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from apps.patients.models import PatientCard, DiseaseHistory
@@ -17,18 +15,16 @@ class PatientCardViewSet(viewsets.ModelViewSet):
     queryset = PatientCard.objects.all()
     serializer_class = PatientCardSerializer
     permission_classes = [IsDoctorOrChiefDoctor]
-    filter_backends = [filters.DjangoFilterBackend, SearchFilter]  # Исправьте импорт
-    filterset_fields = ['gender', 'birth_date', 'nationality']  # Example fields for filtering
-    search_fields = ['first_name', 'last_name', 'middle_name', 'personal_number']
+    filter_backends = [filters.DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['gender', 'birth_date', 'nationality']
+    search_fields = ['first_name', 'last_name', 'middle_name', 'personal_number', 'phone_number']
     pagination_class = StandardResultsSetPagination
 
 class DiseaseHistoryViewSet(viewsets.ModelViewSet):
     queryset = DiseaseHistory.objects.all()
     serializer_class = DiseaseHistorySerializer
     permission_classes = [IsDoctorOrChiefDoctor]
-    filter_backends = [filters.DjangoFilterBackend, SearchFilter]  # Исправьте импорт
-    filterset_fields = ['disease', 'doctor', 'Nurse']  # Example fields for filtering
-    search_fields = ['disease']
+    filter_backends = [filters.DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['disease', 'doctor', 'nurse']
+    search_fields = ['disease', 'complaints']
     pagination_class = StandardResultsSetPagination
-
-   

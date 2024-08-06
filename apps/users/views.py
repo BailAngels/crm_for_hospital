@@ -10,7 +10,10 @@ from .serializers import (
     DoctorCreateSerializer,
     NurseSerializer,
     NurseCreateSerializerForAdminAndChiefDoctor,
-    NurseCreateSerializer
+    NurseCreateSerializer,
+    UserProfileSerializer,
+    DoctorProfileSerializer,
+    NurseProfileSerializer
 )
 from apps.users.models import IsChiefDoctorOrAdmin, IsChiefDoctorOrAdminOrReadOnly
 
@@ -67,9 +70,9 @@ class UserProfileView(views.APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         if hasattr(user, 'doctor'):
-            serializer = DoctorSerializer(user)
+            serializer = DoctorProfileSerializer(user.doctor)
         elif hasattr(user, 'nurse'):
-            serializer = NurseSerializer(user)
+            serializer = NurseProfileSerializer(user.nurse)
         else:
-            return Response({"detail": "Пользователь не имеет роли доктора или медсестры."}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = UserProfileSerializer(user)
         return Response(serializer.data)

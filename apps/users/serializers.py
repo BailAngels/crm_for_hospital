@@ -1,5 +1,20 @@
 from rest_framework import serializers
-from .models import Doctor, Nurse
+from .models import Doctor, Nurse, User
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'middle_name', 'photo', 'gender', 'email']
+
+class DoctorProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ['id', 'username', 'first_name', 'last_name', 'middle_name', 'photo', 'gender', 'email', 'is_chief_doctor', 'speciality']
+
+class NurseProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nurse
+        fields = ['id', 'username', 'first_name', 'last_name', 'middle_name', 'photo', 'gender', 'email', 'is_busy']
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,7 +30,6 @@ class DoctorSerializer(serializers.ModelSerializer):
             'is_chief_doctor',
             'speciality'
         ]
-
 
 class DoctorCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -41,7 +55,6 @@ class DoctorCreateSerializer(serializers.ModelSerializer):
         doctor.save()
         return doctor
 
-
 class NurseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nurse
@@ -55,7 +68,6 @@ class NurseSerializer(serializers.ModelSerializer):
             'gender',
             'is_busy'
         ]
-
 
 class NurseCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -78,7 +90,6 @@ class NurseCreateSerializer(serializers.ModelSerializer):
         nurse.set_password(password)
         nurse.save()
         return nurse
-
 
 class NurseCreateSerializerForAdminAndChiefDoctor(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

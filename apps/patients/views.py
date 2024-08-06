@@ -49,21 +49,28 @@ class MyPatientsView(generics.ListAPIView):
         elif hasattr(user, 'nurse'):
             return DiseaseHistory.objects.filter(nurse=user.nurse, cured=False)
         return DiseaseHistory.objects.none()
-
+    
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         patient_cards = {history.patient_cart.id: history.patient_cart for history in queryset}
-        return Response({
-            "patients": list(patient_cards.values()),
+        response_data = {
+            "patients": PatientCardSerializer(patient_cards.values(), many=True).data,
             "details": serializer.data
-        })
+        }
+        return Response(response_data)
 
 
 class DoctorsPatientsView(generics.ListAPIView):
     permission_classes = [IsChiefDoctorOrAdmin]
     pagination_class = StandardResultsSetPagination
 
+    def get_queryset(self):
+        doctor_id = self.request.query_params.get('doctor_id')
+        if doctor_id:
+            return PatientCard.objects.filter(disease_history__doctor_id=doctor_id).distinct()
+        return Doctor.objects.all()
+    
     def get(self, request, *args, **kwargs):
         doctors = Doctor.objects.all()
         response_data = []
@@ -78,8 +85,3 @@ class DoctorsPatientsView(generics.ListAPIView):
             })
         return Response(response_data)
 
-    def get_queryset(self):
-        doctor_id = self.request.query_params.get('doctor_id')
-        if doctor_id:
-            return PatientCard.objects.filter(disease_history__doctor_id=doctor_id).distinct()
-        return Doctor.objects.all()

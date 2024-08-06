@@ -18,3 +18,12 @@ class DiseaseHistorySerializer(serializers.ModelSerializer):
             'id', 'patient_cart', 'doctor', 'nurse', 'disease',
             'prescription', 'complaints', 'cured'
         ]
+
+
+class MyPatientsSerializer(serializers.ModelSerializer):
+    patient = serializers.CharField(source='patient_cart.__str__')
+
+    class Meta:
+        model = DiseaseHistory
+        fields = ['id', 'patient_cart', 'disease', 'prescription', 'complaints', 'cured']
+        read_only_fields = ['id', 'patient_cart', 'disease', 'prescription', 'complaints', 'cured']

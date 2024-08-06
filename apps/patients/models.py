@@ -20,7 +20,7 @@ class PatientCard(models.Model):
     authority = models.CharField(max_length=150, verbose_name='Орган выдачи')
     date_of_issue = models.DateField(verbose_name='Дата выдачи')
     personal_number = models.CharField(max_length=150, unique=True, verbose_name='Персональный номер')
-    phone_number = models.CharField(max_length=15, verbose_name='номер телефона')  # новое поле
+    phone_number = models.CharField(max_length=15, verbose_name='номер телефона')
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.personal_number}"
@@ -36,7 +36,8 @@ class DiseaseHistory(models.Model):
     nurse = models.ForeignKey(Nurse, on_delete=models.SET_NULL, blank=True, null=True, related_name='dis_his')
     disease = models.CharField(max_length=255, verbose_name='название болезни')
     prescription = models.TextField(verbose_name='назначение')
-    complaints = models.TextField(verbose_name='жалобы')  # новое поле
+    complaints = models.TextField(verbose_name='жалобы')
+    cured = models.BooleanField(default=False, verbose_name='излечен')  # новое поле
 
     def __str__(self):
         return f"История болезни: {self.disease} для {self.patient_cart.first_name} {self.patient_cart.last_name}"

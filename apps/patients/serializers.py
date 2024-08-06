@@ -8,7 +8,7 @@ class PatientCardSerializer(serializers.ModelSerializer):
             'id', 'first_name', 'last_name', 'middle_name', 'photo',
             'birth_date', 'gender', 'nationality', 'document_number',
             'document_expiry_date', 'place_of_birth', 'authority',
-            'date_of_issue', 'personal_number', 'phone_number'  # добавлено новое поле
+            'date_of_issue', 'personal_number', 'phone_number'
         ]
 
 class DiseaseHistorySerializer(serializers.ModelSerializer):
@@ -16,5 +16,5 @@ class DiseaseHistorySerializer(serializers.ModelSerializer):
         model = DiseaseHistory
         fields = [
             'id', 'patient_cart', 'doctor', 'nurse', 'disease',
-            'prescription', 'complaints'  # добавлено новое поле
+            'prescription', 'complaints', 'cured'
         ]

@@ -25,6 +25,6 @@ class DiseaseHistoryViewSet(viewsets.ModelViewSet):
     serializer_class = DiseaseHistorySerializer
     permission_classes = [IsDoctorOrChiefDoctor]
     filter_backends = [filters.DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['disease', 'doctor', 'nurse']
+    filterset_fields = ['disease', 'doctor', 'nurse', 'cured']  # добавлено новое поле
     search_fields = ['disease', 'complaints']
     pagination_class = StandardResultsSetPagination

@@ -7,7 +7,8 @@ from django_filters import rest_framework as filters
 
 from apps.patients.models import PatientCard, DiseaseHistory
 from apps.patients.serializers import PatientCardSerializer, DiseaseHistorySerializer, MyPatientsSerializer
-from apps.users.models import IsDoctorOrChiefDoctorOrNurse
+from apps.users.models import IsDoctorOrChiefDoctorOrNurse, IsChiefDoctorOrAdmin, Doctor
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -30,9 +31,10 @@ class DiseaseHistoryViewSet(viewsets.ModelViewSet):
     serializer_class = DiseaseHistorySerializer
     permission_classes = [IsDoctorOrChiefDoctorOrNurse]
     filter_backends = [filters.DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['disease', 'doctor', 'nurse', 'cured']  # добавлено новое поле
+    filterset_fields = ['disease', 'doctor', 'nurse', 'cured']
     search_fields = ['disease', 'complaints']
     pagination_class = StandardResultsSetPagination
+
 
 
 
@@ -56,3 +58,28 @@ class MyPatientsView(generics.ListAPIView):
             "patients": list(patient_cards.values()),
             "details": serializer.data
         })
+
+
+class DoctorsPatientsView(generics.ListAPIView):
+    permission_classes = [IsChiefDoctorOrAdmin]
+    pagination_class = StandardResultsSetPagination
+
+    def get(self, request, *args, **kwargs):
+        doctors = Doctor.objects.all()
+        response_data = []
+        for doctor in doctors:
+            patients = PatientCard.objects.filter(disease_history__doctor=doctor).distinct()
+            response_data.append({
+                "doctor": {
+                    "id": doctor.id,
+                    "full_name": f"{doctor.first_name} {doctor.last_name} {doctor.middle_name}"
+                },
+                "patients": PatientCardSerializer(patients, many=True).data
+            })
+        return Response(response_data)
+
+    def get_queryset(self):
+        doctor_id = self.request.query_params.get('doctor_id')
+        if doctor_id:
+            return PatientCard.objects.filter(disease_history__doctor_id=doctor_id).distinct()
+        return Doctor.objects.all()

@@ -62,10 +62,11 @@ class IsDoctorOrChiefDoctorOrNurse(permissions.BasePermission):
             if request.user.is_staff:
                 return True
             if hasattr(request.user, 'doctor'):
-                return request.user.doctor.is_chief_doctor or request.user.doctor
+                return True
             if hasattr(request.user, 'nurse'):
                 return True
         return False
+
 
 
 

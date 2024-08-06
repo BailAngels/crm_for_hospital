@@ -56,14 +56,17 @@ class Nurse(User):
         verbose_name_plural = 'Медсестры'
 
 
-class IsDoctorOrChiefDoctor(permissions.BasePermission):
+class IsDoctorOrChiefDoctorOrNurse(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user and request.user.is_authenticated:
             if request.user.is_staff:
                 return True
             if hasattr(request.user, 'doctor'):
                 return request.user.doctor.is_chief_doctor or request.user.doctor
+            if hasattr(request.user, 'nurse'):
+                return True
         return False
+
 
 
 class IsChiefDoctorOrAdmin(permissions.BasePermission):
